@@ -3,326 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matematika Sang Juara: Tantangan Olimpiade SD</title>
-    <meta name="description" content="Game edukasi matematika tingkat tinggi berbasis materi Sekolah Dasar (SD) dengan tantangan olimpiade, teka-teki logika nalar, dan mode Make 24.">
-    <link rel="stylesheet" href="style.css">
+    <title>Petualangan Cendekia: Ekspedisi Pulau Pengetahuan</title>
+    <meta name="description" content="Game edukasi interaktif seru dengan unsur Matematika, Sains, Bahasa, Geografi, dan Logika dalam petualangan RPG yang memukau!">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Confetti Canvas for Victory Celebrations -->
-    <canvas id="confetti-canvas"></canvas>
+    <!-- Fullscreen Particle Effects Canvas -->
+    <canvas id="fx-canvas"></canvas>
 
-    <div class="app-wrapper">
-        <!-- Top App Header -->
-        <header class="app-header">
-            <div class="brand-area">
-                <div class="brand-logo">📐</div>
+    <div class="app-container">
+        <!-- TOP HEADER & PLAYER HUD -->
+        <header class="top-header">
+            <div class="brand-section">
+                <div class="brand-badge">⚡</div>
                 <div>
-                    <h1 class="brand-title">Matematika Sang Juara</h1>
-                    <div class="brand-subtitle" id="stat-rank">Pemula Nalar SD</div>
+                    <h1 class="brand-title">Petualangan Cendekia</h1>
+                    <div class="brand-subtitle" id="hud-player-rank">🌱 Murid Pemula (Lv. 1)</div>
                 </div>
             </div>
 
-            <div class="header-stats">
-                <div class="stat-pill" title="Total Skor">
-                    <span class="label">Skor</span>
-                    <span class="val-gold" id="stat-score">0</span>
+            <!-- Player Status HUD -->
+            <div class="player-hud">
+                <!-- Health Bar -->
+                <div class="hud-item">
+                    <div class="hud-label">Darah (HP)</div>
+                    <div class="progress-container">
+                        <div class="progress-fill fill-hp" id="hud-hero-hp-bar" style="width: 100%;"></div>
+                    </div>
+                    <span id="hud-hero-hp-text" style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">100/100 HP</span>
                 </div>
-                <div class="stat-pill" title="Runtutan Benar (Streak)">
-                    <span class="label">Streak</span>
-                    <span class="val-streak" id="stat-streak">0x</span>
+
+                <!-- EXP Progress -->
+                <div class="hud-item">
+                    <div class="hud-label">Pengalaman (EXP)</div>
+                    <div class="progress-container">
+                        <div class="progress-fill fill-exp" id="hud-exp-bar" style="width: 0%;"></div>
+                    </div>
+                    <span id="hud-exp-text" style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">0 / 150 EXP</span>
                 </div>
-                <div class="stat-pill" title="Sisa Nyawa Level">
-                    <span class="label">Nyawa</span>
-                    <span id="stat-lives">❤️❤️❤️</span>
+
+                <!-- Gold Coins -->
+                <div class="hud-item">
+                    <div class="hud-value-badge" id="hud-coins">🪙 100</div>
                 </div>
-                <button type="button" class="btn-icon" id="btn-sound-toggle" title="Matikan/Nyalakan Suara">
-                    <span id="sound-icon">🔊</span>
-                </button>
+            </div>
+
+            <!-- Controls & Modals Trigger -->
+            <div class="header-controls">
+                <button class="btn-icon-control" id="btn-open-shop" title="Buka Toko Cendekia">🛒 Toko</button>
+                <button class="btn-icon-control" id="btn-open-profile" title="Statistik & Piala">🏆 Profil</button>
+                <button class="btn-icon-control" id="btn-toggle-audio" title="Efek Suara">🔊 SFX</button>
+                <button class="btn-icon-control" id="btn-toggle-music" title="Musik Latar">🎵 BGM</button>
             </div>
         </header>
 
-        <!-- Mode Navigation Bar -->
-        <nav class="mode-navigation">
-            <button type="button" class="nav-tab active" data-mode="campaign" id="tab-campaign">
-                <span>🏆</span> Petualangan Level
-            </button>
-            <button type="button" class="nav-tab" data-mode="game24" id="tab-game24">
-                <span>⚡</span> Tantangan 24
-            </button>
-            <button type="button" class="nav-tab" data-mode="time_attack" id="tab-timeattack">
-                <span>⏱️</span> 60s Serangan Kilat
-            </button>
-        </nav>
-
-        <!-- ==========================================
-             VIEW 1: CAMPAIGN / PETUALANGAN LEVEL
-             ========================================== -->
-        <main id="campaign-view">
-            <!-- Current Level Banner -->
-            <div class="level-banner">
-                <div class="lvl-title-group">
-                    <h2 id="current-level-title">Level 1: Kabataku & Kurung Bertingkat</h2>
-                    <p id="current-level-tier">Tier 1: Dasar Logika Cepat • 🔢 Hitung Kilat</p>
-                </div>
-                <button type="button" class="btn-secondary" id="btn-open-levels">
-                    🗺️ Pilih Level
-                </button>
+        <!-- ==========================================================
+             SCREEN 1: MAP VIEW (ZONES & EXPEDITIONS)
+             ========================================================== -->
+        <main class="game-screen active" id="screen-map">
+            <div class="map-header">
+                <h2 class="map-title">Kepulauan Pengetahuan</h2>
+                <p class="map-desc">Pilih pulau tantangan yang ingin dijelajahi! Hadapi bos pengetahuan dengan ketajaman berpikir dan bebaskan pulau dari kabut kebodohan.</p>
             </div>
 
-            <!-- Quiz Box -->
-            <section class="quiz-box">
-                <div class="quiz-top-bar">
-                    <div class="quiz-meta">
-                        <span class="q-counter-tag" id="question-counter">Soal 1 / 5</span>
-                        <div class="timer-wrap">
-                            <span class="timer-pill">⏳ <span id="timer-seconds">90s</span></span>
-                            <div class="timer-track">
-                                <div class="timer-bar" id="timer-progress-bar"></div>
-                            </div>
-                        </div>
+            <!-- 5 Subject Island Zones -->
+            <div class="zones-grid">
+                <!-- Zone 1: Matematika -->
+                <div class="zone-card" data-zone="math" id="zone-card-math">
+                    <div class="zone-badge-wrap">
+                        <div class="zone-icon" style="color: #3b82f6;">📐</div>
+                        <span class="zone-status-tag">Matematika</span>
                     </div>
-                    <button type="button" class="btn-scratch-toggle" id="btn-toggle-scratchpad">
-                        ✏️ Papan Cakar
-                    </button>
+                    <div>
+                        <h3 class="zone-name">Lembah Matematika</h3>
+                        <div class="zone-subtitle">Altar Deret Angka & Kalkulasi</div>
+                    </div>
+                    <p class="zone-desc">Lawan monster kebingungan berhitung dengan kecepatan nalar operasi angka, pecahan, dan geometri!</p>
+                    <div class="zone-boss-info">
+                        <span>Penjaga: <strong>Golem Fraksi Kuno</strong></span>
+                        <span>🗿 120 HP</span>
+                    </div>
                 </div>
 
-                <div class="quiz-content">
-                    <div class="question-title" id="question-title">Operasi Kurung Bertingkat</div>
-                    <div class="question-text" id="question-text">
-                        Hitunglah hasil dari operasi campuran berikut...
+                <!-- Zone 2: Sains / IPA -->
+                <div class="zone-card" data-zone="science" id="zone-card-science">
+                    <div class="zone-badge-wrap">
+                        <div class="zone-icon" style="color: #10b981;">🔬</div>
+                        <span class="zone-status-tag">Sains & IPA</span>
+                    </div>
+                    <div>
+                        <h3 class="zone-name">Hutan Alkimia & Alam</h3>
+                        <div class="zone-subtitle">Laboratorium Biosfer & Antariksa</div>
+                    </div>
+                    <p class="zone-desc">Kuasai hukum alam semesta, tata surya, sains tubuh manusia, dan keajaiban biologi bumi!</p>
+                    <div class="zone-boss-info">
+                        <span>Penjaga: <strong>Chimera Entropi</strong></span>
+                        <span>🐉 120 HP</span>
+                    </div>
+                </div>
+
+                <!-- Zone 3: Bahasa & Kosakata -->
+                <div class="zone-card" data-zone="language" id="zone-card-language">
+                    <div class="zone-badge-wrap">
+                        <div class="zone-icon" style="color: #f59e0b;">📜</div>
+                        <span class="zone-status-tag">Bahasa & Sastra</span>
+                    </div>
+                    <div>
+                        <h3 class="zone-name">Kuil Aksara Luhur</h3>
+                        <div class="zone-subtitle">Perpustakaan Kata & Sastra</div>
+                    </div>
+                    <p class="zone-desc">Pecahkan teka-teki makna peribahasa, sinonim kata berbobot, dan struktur tata bahasa baku!</p>
+                    <div class="zone-boss-info">
+                        <span>Penjaga: <strong>Sphinx Silensium</strong></span>
+                        <span>🦁 120 HP</span>
+                    </div>
+                </div>
+
+                <!-- Zone 4: IPS & Geografi -->
+                <div class="zone-card" data-zone="geography" id="zone-card-geography">
+                    <div class="zone-badge-wrap">
+                        <div class="zone-icon" style="color: #06b6d4;">🧭</div>
+                        <span class="zone-status-tag">IPS & Sejarah</span>
+                    </div>
+                    <div>
+                        <h3 class="zone-name">Samudra Dunia & Sejarah</h3>
+                        <div class="zone-subtitle">Kepulauan Penjelajah Abadi</div>
+                    </div>
+                    <p class="zone-desc">Jelajahi garis khatulistiwa, landmark megah dunia, dan penemuan tokoh revolusioner peradaban!</p>
+                    <div class="zone-boss-info">
+                        <span>Penjaga: <strong>Kraken Kartografi</strong></span>
+                        <span>🐙 120 HP</span>
+                    </div>
+                </div>
+
+                <!-- Zone 5: Logika & Nalar Kritis -->
+                <div class="zone-card" data-zone="logic" id="zone-card-logic">
+                    <div class="zone-badge-wrap">
+                        <div class="zone-icon" style="color: #8b5cf6;">🧩</div>
+                        <span class="zone-status-tag">Logika Nalar</span>
+                    </div>
+                    <div>
+                        <h3 class="zone-name">Labirin Logika Batin</h3>
+                        <div class="zone-subtitle">Menara Penalaran Deduktif</div>
+                    </div>
+                    <p class="zone-desc">Asah daya analisis kritis, deduksi silogisme, dan pemecahan teka-teki logika yang mencengangkan!</p>
+                    <div class="zone-boss-info">
+                        <span>Penjaga: <strong>Raja Ilusi Paradoks</strong></span>
+                        <span>👑 140 HP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini-Games Arena Section -->
+            <section class="minigames-section">
+                <h3 class="minigames-title">🎮 Arena Latihan & Mini-Games</h3>
+                <div class="minigames-grid">
+                    <div class="minigame-card" id="btn-open-anagram">
+                        <div style="font-size: 1.75rem;">🔤</div>
+                        <h4 style="font-family: var(--font-heading); font-size: 1.1rem;">Word Craft: Susun Kata</h4>
+                        <p style="font-size: 0.85rem; color: #94a3b8;">Rangkai huruf-huruf acak menjadi istilah sains, matematika, dan pengetahuan!</p>
+                        <span style="font-size: 0.78rem; color: #f59e0b; font-weight: 700; margin-top: auto;">Hadiah: +50 Koin & +75 EXP</span>
                     </div>
 
-                    <!-- Options Grid (A, B, C, D) -->
-                    <div class="options-grid" id="options-grid">
-                        <!-- Rendered by JS -->
-                    </div>
-
-                    <!-- Inline Feedback Message -->
-                    <div class="inline-feedback" id="inline-feedback"></div>
-
-                    <!-- Question Action Bar (Visible after answer) -->
-                    <div class="question-action-bar hidden" id="question-action-bar">
-                        <button type="button" class="btn-expl" id="btn-show-explanation">
-                            💡 Pembahasan & Trik Cepat
-                        </button>
-                        <button type="button" class="btn-primary" id="btn-next-question">
-                            Lanjut Soal ➔
-                        </button>
+                    <div class="minigame-card" id="btn-open-match">
+                        <div style="font-size: 1.75rem;">🔗</div>
+                        <h4 style="font-family: var(--font-heading); font-size: 1.1rem;">Match & Connect: Pasangan Konsep</h4>
+                        <p style="font-size: 0.85rem; color: #94a3b8;">Hubungkan pasangan planet, penemu bersejarah, dan kosakata secara akurat!</p>
+                        <span style="font-size: 0.78rem; color: #f59e0b; font-weight: 700; margin-top: auto;">Hadiah: +60 Koin & +90 EXP</span>
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- ==========================================
-             VIEW 2: GAME 24 (MAKE 24 PUZZLE)
-             ========================================== -->
-        <section id="game24-view" class="hidden">
-            <div class="game24-container">
-                <div class="game24-header">
-                    <div class="game24-title">
-                        <h2>Tantangan Matematika 24 (Make 24)</h2>
-                        <p>Gunakan ke-4 kartu angka dan operator (+, -, ×, ÷, kurung) agar bernilai 24!</p>
+        <!-- ==========================================================
+             SCREEN 2: RPG COMBAT BATTLE ARENA
+             ========================================================== -->
+        <main class="game-screen" id="screen-battle">
+            <div class="battle-container">
+                <!-- Battle Top Navigation -->
+                <div class="battle-nav-bar">
+                    <button class="btn-icon-control btn-back-map" id="btn-battle-back">⬅ Kembali ke Peta</button>
+                    <div class="zone-tag" id="battle-zone-tag">Zona Pertarungan</div>
+                    <div class="combo-badge" id="battle-combo-badge">🔥 COMBO x1</div>
+                </div>
+
+                <!-- Combat Stage: Hero vs Monster -->
+                <div class="combat-stage">
+                    <!-- Hero Card -->
+                    <div class="combat-card" id="battle-hero-card">
+                        <div class="combat-card-header">
+                            <div class="combat-avatar" style="border-color: #10b981;">🧙‍♂️</div>
+                            <div class="combat-info">
+                                <h3 class="combat-name" id="hud-player-name">Ksatria Cendekia</h3>
+                                <div class="combat-title">Pahlawan Pengetahuan</div>
+                            </div>
+                        </div>
+                        <div class="combat-hp-wrap">
+                            <div class="combat-hp-bar">
+                                <div class="hp-fill-hero" id="hero-battle-hp-bar" style="width: 100%;"></div>
+                            </div>
+                            <div class="hp-text">
+                                <span>Status Energi</span>
+                                <span id="hero-battle-hp-text">Siap Bertempur</span>
+                            </div>
+                        </div>
                     </div>
-                    <span class="game24-badge" id="game24-difficulty-badge">Tingkat: Ekstrem</span>
+
+                    <!-- Monster Boss Card -->
+                    <div class="combat-card" id="battle-monster-card">
+                        <div class="combat-card-header">
+                            <div class="combat-avatar" id="monster-avatar" style="border-color: #ef4444;">🗿</div>
+                            <div class="combat-info">
+                                <h3 class="combat-name" id="monster-name">Golem Fraksi Kuno</h3>
+                                <div class="combat-title" id="monster-title">Penjaga Angka Keramat</div>
+                            </div>
+                        </div>
+                        <div class="combat-hp-wrap">
+                            <div class="combat-hp-bar">
+                                <div class="hp-fill-monster" id="monster-hp-bar" style="width: 100%;"></div>
+                            </div>
+                            <div class="hp-text">
+                                <span>Darah Musuh</span>
+                                <span id="monster-hp-text">120 / 120 HP</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 4 Number Cards -->
-                <div class="cards-deck" id="game24-cards">
-                    <!-- Rendered by JS -->
-                </div>
+                <!-- Question Box -->
+                <div class="question-panel">
+                    <!-- Timer Bar -->
+                    <div class="timer-section">
+                        <div class="timer-bar-wrap">
+                            <div class="timer-fill" id="battle-timer-bar" style="width: 100%;"></div>
+                        </div>
+                        <div class="timer-text" id="battle-timer-text">20s</div>
+                    </div>
 
-                <!-- Constructed Expression Display -->
-                <div class="expression-box" id="game24-expression">
-                    <span class="placeholder-text">Klik kartu angka dan tombol operator di bawah untuk menyusun ekspresi...</span>
-                </div>
+                    <!-- Question Content -->
+                    <h3 class="question-text" id="battle-question-text">Memuat pertanyaan tantangan...</h3>
+                    <div class="question-clue" id="battle-question-clue">💡 Petunjuk: Pikirkan dengan teliti sebelum menjawab!</div>
 
-                <!-- Keypad Operators -->
-                <div class="operators-pad">
-                    <button type="button" class="btn-op-24" data-op="(">(</button>
-                    <button type="button" class="btn-op-24" data-op=")">)</button>
-                    <button type="button" class="btn-op-24" data-op="+">+</button>
-                    <button type="button" class="btn-op-24" data-op="-">-</button>
-                    <button type="button" class="btn-op-24" data-op="*">×</button>
-                    <button type="button" class="btn-op-24" data-op="/">÷</button>
-                    <button type="button" class="btn-action-24" id="btn-24-backspace" title="Hapus Karakter Terakhir">⌫</button>
-                    <button type="button" class="btn-action-24" id="btn-24-clear" title="Kosongkan Semua">C</button>
-                </div>
+                    <!-- 4 Multiple Choice Options -->
+                    <div class="options-grid" id="battle-options">
+                        <!-- Rendered dynamically -->
+                    </div>
 
-                <!-- Feedback Message -->
-                <div class="game24-feedback" id="game24-feedback"></div>
-
-                <!-- Smart Hint Container -->
-                <div class="game24-hint-box" id="game24-hint"></div>
-
-                <!-- Bottom Actions -->
-                <div class="game24-bottom-actions">
-                    <button type="button" class="btn-secondary" id="btn-24-new">
-                        🔄 Acak Kartu Baru
-                    </button>
-                    <div style="display: flex; gap: 10px;">
-                        <button type="button" class="btn-expl" id="btn-24-hint">
-                            💡 Petunjuk Cerdas
+                    <!-- Spells Toolbar -->
+                    <div class="spells-bar">
+                        <button class="spell-btn" id="spell-5050" title="Eliminasi 2 pilihan salah">
+                            🪄 Dewi Athena (50:50) <span class="spell-badge-count" id="count-spell-5050">3</span>
                         </button>
-                        <button type="button" class="btn-primary" id="btn-24-check">
-                            🎯 Cek Jawaban
+                        <button class="spell-btn" id="spell-freeze" title="Hentikan waktu +10 detik">
+                            ⏳ Bekukan Waktu <span class="spell-badge-count" id="count-spell-freeze">2</span>
+                        </button>
+                        <button class="spell-btn" id="spell-shield" title="Tangkis 1 kesalahan tanpa terkena serangan">
+                            🛡️ Perisai Cendekia <span class="spell-badge-count" id="count-spell-shield">2</span>
                         </button>
                     </div>
                 </div>
             </div>
-        </section>
+        </main>
 
-        <!-- ==========================================
-             VIEW 3: TIME ATTACK (60 DETIK SERANGAN KILAT)
-             ========================================== -->
-        <section id="timeattack-view" class="hidden">
-            <div class="timeattack-container">
-                <!-- Start Screen -->
-                <div id="ta-start-screen" class="ta-hero">
-                    <h2>Serangan Kilat 60 Detik!</h2>
-                    <p>Uji kecepatan dan ketajaman nalar matematika dasar Anda. Jawab soal olimpiade sebanyak-banyaknya sebelum waktu habis!</p>
-                    <div class="ta-stats-badge">
-                        <span>Skor per Jawaban: +50 Poin</span>
-                        <span>Salah: -20 Poin</span>
-                    </div>
-                    <br>
-                    <button type="button" class="btn-primary" id="btn-start-ta" style="font-size: 1.15rem; padding: 14px 36px;">
-                        ⚡ Mulai Tantangan 60s
-                    </button>
+        <!-- ==========================================================
+             SCREEN 3: MINI-GAME 1 - WORD CRAFT ANAGRAM
+             ========================================================== -->
+        <main class="game-screen" id="screen-anagram">
+            <div class="battle-nav-bar" style="margin-bottom: 1.5rem;">
+                <button class="btn-icon-control btn-back-map">⬅ Kembali ke Peta</button>
+                <div class="zone-tag" style="color: #f59e0b; border-color: #f59e0b;">🔤 Word Craft: Susun Huruf</div>
+                <div></div>
+            </div>
+
+            <div class="anagram-panel">
+                <h3 style="font-family: var(--font-heading); font-size: 1.6rem;" id="anagram-subject">Kategori: Sains</h3>
+                <div class="question-clue" id="anagram-clue" style="width: 100%; text-align: center;">💡 Petunjuk: Sedang memuat...</div>
+
+                <div style="font-size: 0.9rem; color: #94a3b8;">Klik huruf acak di bawah untuk menyusun ke kotak kata:</div>
+
+                <!-- Word Slots -->
+                <div class="anagram-slots" id="anagram-slots">
+                    <!-- Rendered dynamically -->
                 </div>
 
-                <!-- Active Game Screen -->
-                <div id="ta-game-screen" class="hidden">
-                    <div class="ta-timer-display" id="ta-timer-val">60s</div>
-                    <div style="font-size: 1.1rem; color: var(--accent-gold); font-weight: 700; margin-bottom: 16px;">
-                        Skor: <span id="ta-score-val">0</span>
-                    </div>
-                    <div class="question-title" id="ta-q-title">Soal Cepat</div>
-                    <div class="question-text" id="ta-q-text">Pertanyaan...</div>
-                    <div class="options-grid" id="ta-options-grid"></div>
-                </div>
-
-                <!-- Result Screen -->
-                <div id="ta-result-screen" class="hidden ta-hero">
-                    <h2>Waktu Habis!</h2>
-                    <p id="ta-final-correct">0 Soal Terjawab Benar</p>
-                    <div style="font-size: 2.5rem; font-family: var(--font-heading); font-weight: 800; color: #38bdf8; margin: 16px 0;">
-                        <span id="ta-final-score">0</span> Poin
-                    </div>
-                    <button type="button" class="btn-primary" id="btn-retry-ta">
-                        🔄 Main Lagi
-                    </button>
+                <!-- Letters Pool -->
+                <div class="anagram-letters" id="anagram-letters">
+                    <!-- Rendered dynamically -->
                 </div>
             </div>
-        </section>
+        </main>
+
+        <!-- ==========================================================
+             SCREEN 4: MINI-GAME 2 - MATCH & CONNECT
+             ========================================================== -->
+        <main class="game-screen" id="screen-match">
+            <div class="battle-nav-bar" style="margin-bottom: 1.5rem;">
+                <button class="btn-icon-control btn-back-map">⬅ Kembali ke Peta</button>
+                <div class="zone-tag" style="color: #06b6d4; border-color: #06b6d4;">🔗 Match & Connect: Pasangan Konsep</div>
+                <div></div>
+            </div>
+
+            <div class="match-panel">
+                <h3 style="font-family: var(--font-heading); font-size: 1.5rem; text-align: center;" id="match-topic">Misi: Hubungkan Konsep</h3>
+                <p style="text-align: center; color: #94a3b8; font-size: 0.9rem;">Klik salah satu kartu di kolom kiri, lalu klik pasangannya di kolom kanan!</p>
+
+                <div class="match-grid">
+                    <div class="match-column" id="match-col-left"></div>
+                    <div class="match-column" id="match-col-right"></div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- ==========================================
-         MODAL 1: LEVEL SELECTION DIALOG
-         ========================================== -->
-    <div class="modal-overlay" id="level-modal">
+    <!-- ==========================================================
+         MODALS
+         ========================================================== -->
+    <!-- Victory Modal -->
+    <div class="modal-overlay" id="modal-victory">
         <div class="modal-card">
-            <div class="modal-header">
-                <h3>Pilih Level Tantangan</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-levels">&times;</button>
+            <div style="font-size: 3.5rem;">🏆</div>
+            <h2 class="modal-title" id="modal-victory-title">Pulau Berhasil Dibebaskan!</h2>
+            <p class="modal-desc" id="modal-victory-desc">Ketajaman nalar Anda mengalahkan kabut kebodohan!</p>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: var(--radius-md);" id="modal-victory-reward">
+                Bonus: +150 Koin Emas & +200 EXP
             </div>
-            <div class="level-grid" id="level-grid">
-                <!-- 10 Level Cards rendered by JS -->
-            </div>
+            <button class="modal-btn-primary" id="btn-victory-claim">Ambil Hadiah & Lanjutkan</button>
         </div>
     </div>
 
-    <!-- ==========================================
-         MODAL 2: EXPLANATION & QUICK TRICK DIALOG
-         ========================================== -->
-    <div class="modal-overlay" id="explanation-modal">
+    <!-- Profile & Badges Modal -->
+    <div class="modal-overlay" id="modal-profile">
         <div class="modal-card">
-            <div class="modal-header">
-                <h3 id="expl-modal-title">Pembahasan & Langkah Cepat</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-explanation">&times;</button>
+            <div style="font-size: 3rem;">🧙‍♂️</div>
+            <h2 class="modal-title" id="profile-title">Ksatria Cendekia</h2>
+            <div style="display: inline-block; background: #3b82f6; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 700;" id="profile-level-badge">Lv. 1</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; text-align: left; background: rgba(255,255,255,0.04); padding: 1rem; border-radius: var(--radius-md);">
+                <div>Total Soal Dijawab: <strong id="profile-total-answered">0</strong></div>
+                <div>Jawaban Benar: <strong id="profile-correct-answers" style="color: #10b981;">0</strong></div>
+                <div>Combo Maksimal: <strong id="profile-max-combo" style="color: #f59e0b;">0</strong></div>
+                <div>Bos Ditaklukkan: <strong id="profile-bosses" style="color: #ec4899;">0</strong></div>
             </div>
-            <div class="explanation-steps" id="expl-modal-steps">
-                <!-- Steps rendered by JS -->
+
+            <div>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; font-weight: 600;">Lencana & Gelar Kehormatan:</div>
+                <div class="badges-container" id="profile-badges-list">
+                    <span class="badge-icon">🌱</span>
+                </div>
             </div>
-            <div class="explanation-trick" id="expl-modal-trick">
-                <!-- Pro trick rendered by JS -->
-            </div>
+
+            <button class="modal-btn-primary" id="btn-close-profile">Tutup</button>
         </div>
     </div>
 
-    <!-- ==========================================
-         MODAL 3: LEVEL COMPLETE / RESULT DIALOG
-         ========================================== -->
-    <div class="modal-overlay" id="level-complete-modal">
-        <div class="modal-card" style="max-width: 500px;">
-            <div class="modal-centered-content">
-                <div class="stars-big" id="complete-stars">
-                    <span class="star gold">★</span>
-                    <span class="star gold">★</span>
-                    <span class="star gold">★</span>
-                </div>
-                <h2 id="complete-title">Level Selesai!</h2>
-                <p id="complete-desc">Hebat! Anda berhasil menaklukkan tantangan nalar tingkat tinggi ini.</p>
-                <div class="score-tag" id="complete-score">+450 Poin Diperoleh</div>
-                <div class="modal-button-group">
-                    <button type="button" class="btn-secondary" id="btn-level-menu">Pilih Level</button>
-                    <button type="button" class="btn-secondary" id="btn-level-retry">Ulangi Level</button>
-                    <button type="button" class="btn-primary" id="btn-level-next">Lanjut Level Berikutnya ➔</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Shop / Refill Spells Modal -->
+    <div class="modal-overlay" id="modal-shop">
+        <div class="modal-card">
+            <div style="font-size: 3rem;">🛒</div>
+            <h2 class="modal-title">Toko Cendekia</h2>
+            <p class="modal-desc" id="shop-coins-text">Koin Anda: 🪙 100</p>
 
-    <!-- ==========================================
-         MODAL 4: GAME OVER DIALOG
-         ========================================== -->
-    <div class="modal-overlay" id="game-over-modal">
-        <div class="modal-card" style="max-width: 460px;">
-            <div class="modal-centered-content">
-                <div style="font-size: 3rem; margin-bottom: 10px;">💔</div>
-                <h2>Nyawa Anda Habis!</h2>
-                <p>Tantangan materi ini cukup menantang! Jangan berkecil hati, pelajari trik pembahasannya dan coba kembali.</p>
-                <br>
-                <div class="modal-button-group">
-                    <button type="button" class="btn-secondary" id="btn-gameover-menu">Pilih Level</button>
-                    <button type="button" class="btn-primary" id="btn-gameover-retry">Coba Lagi 🔄</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==========================================
-         MODAL 5: PAPAN CAKAR INTERAKTIF (CANVAS)
-         ========================================== -->
-    <div class="scratchpad-modal-overlay" id="scratchpad-modal">
-        <div class="scratchpad-window">
-            <div class="scratchpad-toolbar">
-                <div class="toolbar-title">
-                    <span>✏️ Papan Cakar Layar</span>
-                </div>
-                <div class="toolbar-tools">
-                    <div class="color-dots-group">
-                        <div class="color-dot selected" data-color="#f8fafc" style="background: #f8fafc;" title="Pena Putih"></div>
-                        <div class="color-dot" data-color="#facc15" style="background: #facc15;" title="Pena Kuning"></div>
-                        <div class="color-dot" data-color="#38bdf8" style="background: #38bdf8;" title="Pena Biru Muda"></div>
-                        <div class="color-dot" data-color="#f87171" style="background: #f87171;" title="Pena Merah"></div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700;">🪄 Mantra 50:50</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Eliminasi 2 pilihan jawaban salah</div>
                     </div>
-                    <button type="button" class="btn-tool" id="btn-eraser-scratchpad">Penghapus</button>
-                    <button type="button" class="btn-tool" id="btn-undo-scratchpad">Undo</button>
-                    <button type="button" class="btn-tool" id="btn-clear-scratchpad">Bersihkan</button>
-                    <button type="button" class="btn-secondary" id="btn-close-scratchpad" style="padding: 4px 10px;">Tutup</button>
+                    <button class="modal-btn-primary" id="buy-5050" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">50 🪙</button>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700;">⏳ Pembeku Waktu</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Hentikan batas waktu +10 detik</div>
+                    </div>
+                    <button class="modal-btn-primary" id="buy-freeze" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">60 🪙</button>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700;">🛡️ Perisai Cendekia</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Tangkis 1 kesalahan tanpa luka</div>
+                    </div>
+                    <button class="modal-btn-primary" id="buy-shield" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">70 🪙</button>
                 </div>
             </div>
-            <div class="scratchpad-canvas-wrap">
-                <canvas id="scratchpad-canvas"></canvas>
-            </div>
+
+            <button class="modal-btn-primary" id="btn-close-shop" style="background: rgba(255,255,255,0.1); box-shadow: none;">Tutup</button>
         </div>
     </div>
 
     <!-- Scripts -->
     <script src="js/audio.js"></script>
-    <script src="js/questions.js"></script>
-    <script src="js/scratchpad.js"></script>
-    <script src="js/game24.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>
